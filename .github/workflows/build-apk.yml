@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout project
         uses: actions/checkout@v4
 
@@ -21,14 +20,8 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install Capacitor Camera
-        run: npm install @capacitor/camera@8.5.1
-
-      - name: Install Ionic PWA Elements
-        run: npm install @ionic/pwa-elements
+      - name: Install npm dependencies
+        run: npm ci
 
       - name: Build Ionic application
         run: npm run build
