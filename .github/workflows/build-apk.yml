@@ -12,86 +12,54 @@ jobs:
 
     steps:
 
-      # ---------------------------------------------------
-      # 1. Get the source code
-      # ---------------------------------------------------
       - name: Checkout project
         uses: actions/checkout@v4
 
-      # ---------------------------------------------------
-      # 2. Install Node.js
-      # ---------------------------------------------------
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
 
-      # ---------------------------------------------------
-      # 3. Install project dependencies
-      # ---------------------------------------------------
-      - name: Install npm dependencies
-        run: npm ci
+      - name: Install dependencies
+        run: npm install
 
-      # ---------------------------------------------------
-      # 4. Build Ionic/Vue application
-      # ---------------------------------------------------
+      - name: Install Capacitor Camera
+        run: npm install @capacitor/camera@8.5.1
+
+      - name: Install Ionic PWA Elements
+        run: npm install @ionic/pwa-elements
+
       - name: Build Ionic application
         run: npm run build
 
-      # ---------------------------------------------------
-      # 5. Install Java 21
-      # IMPORTANT:
-      # Capacitor Android currently compiles with Java 21.
-      # ---------------------------------------------------
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      # ---------------------------------------------------
-      # 6. Check Java version
-      # ---------------------------------------------------
       - name: Check Java version
         run: java -version
 
-      # ---------------------------------------------------
-      # 7. Sync Capacitor Android
-      # ---------------------------------------------------
       - name: Sync Capacitor Android
         run: npx cap sync android
 
-      # ---------------------------------------------------
-      # 8. Give Gradle execution permission
-      # ---------------------------------------------------
       - name: Make Gradle executable
         run: chmod +x android/gradlew
 
-      # ---------------------------------------------------
-      # 9. Check Gradle environment
-      # ---------------------------------------------------
       - name: Check Gradle version
         working-directory: android
         run: ./gradlew --version
 
-      # ---------------------------------------------------
-      # 10. Build Android APK
-      # ---------------------------------------------------
       - name: Build Android APK
         working-directory: android
         run: ./gradlew assembleDebug
 
-      # ---------------------------------------------------
-      # 11. Copy APK
-      # ---------------------------------------------------
       - name: Copy APK
         run: |
           cp android/app/build/outputs/apk/debug/app-debug.apk IonicCalculator.apk
 
-      # ---------------------------------------------------
-      # 12. Upload APK to GitHub Actions
-      # ---------------------------------------------------
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
